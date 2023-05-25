@@ -1,0 +1,77 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Forum | Subject Management
+{% endblock %}
+
+{% block body %}
+	<div class="border-t border-white/10 pt-11">
+		<h2 class="px-4 text-base font-semibold leading-7 text-white sm:px-6 lg:px-8">Liste des topics</h2>
+		<table class="mt-6 w-full whitespace-nowrap text-left">
+			<colgroup>
+				<col class="w-full sm:w-4/12">
+				<col class="lg:w-4/12">
+				<col class="lg:w-2/12">
+				<col class="lg:w-1/12">
+				<col class="lg:w-1/12">
+			</colgroup>
+			<thead class="border-b border-white/10 text-sm leading-6 text-white">
+				<tr>
+					<th scope="col" class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">Titre</th>
+					<th scope="col" class="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell">Créé par</th>
+					<th scope="col" class="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20">Date de création</th>
+					<th scope="col" class="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20">Tags</th>
+					<th scope="col" class="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20">Status</th>
+					<th scope="col" class="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20">Nombre de commentaires</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-white/5">
+				{% for subject in subjects %}
+					<tr>
+						<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
+							<div class="flex items-center gap-x-4">
+								<div class="truncate text-sm font-medium leading-6 text-white">
+									<a href="/subject/{{subject.id}}" class="hover:underline">{{ subject.title }}</a>
+								</div>
+							</div>
+						</td>
+						<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
+							<div class="flex gap-x-3">
+								<div class="font-mono text-sm leading-6 text-gray-400">{{subject.user.username}}</div>
+							</div>
+						</td>
+						<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+							<div class="flex gap-x-3">
+								<div class="font-mono text-sm leading-6 text-gray-400">{{subject.createdAt|date("d/m/Y")}}</div>
+							</div>
+						</td>
+						<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
+							<div class="flex gap-x-3">
+								<div class="font-mono text-sm leading-6 text-gray-400">
+									{% for tag in subject.tags %}
+										<span class="inline-flex items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">#{{ tag.name }}
+										</span>
+									{% endfor %}
+								</div>
+							</div>
+						</td>
+						<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+							<div class="mt-1 flex items-center gap-x-1.5">
+								<div class="flex-none rounded-full bg-{{subject.isOpen ? 'emerald' : 'red'}}-500/20 p-1">
+									<div class="h-1.5 w-1.5 rounded-full bg-{{subject.isOpen ? 'emerald' : 'red'}}-500"></div>
+								</div>
+								<p class="text-xs leading-5 text-gray-500">{{subject.isOpen ? 'Ouvert' : 'Fermé'}}</p>
+							</div>
+						</td>
+						<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+							<div class="flex gap-x-3">
+								<div class="font-mono text-sm leading-6 text-gray-400">{{subject.comments|length}}</div>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+
+				<!-- More items... -->
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

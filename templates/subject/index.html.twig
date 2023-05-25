@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Forum | New Subject{% endblock %}
+
+{% block body %}
+    
+    <h1 class="text-2xl font-bold text-center mb-2">Nouveau topic</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.use_tags) }}
+        
+        <h3 class="mt-2 block text-gray-700 text-base font-bold mb-2">Tags</h3>
+
+        <ul class="tags ms-2"
+            data-index="{{ form.tags|length > 0 ? form.tags|last.vars.name + 1 : 0 }}"
+            data-prototype="{{ form_widget(form.tags.vars.prototype)|e('html_attr') }}"
+        ></ul>
+
+        <button type="button" class="add_item_link bg-amber-500 mt-2 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" data-collection-holder-class="tags">Créer un nouveau tag</button>
+
+        <h3 class="mt-2 block text-gray-700 text-base font-bold mb-2">Premier commentaire</h3>
+        
+        {{ form_row(form.comment.content) }}
+
+
+    {{ form_end(form) }}
+    
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+
+            const addTagFormDeleteLink = (item) => {
+                const removeFormButton = document.createElement('button')
+                removeFormButton.innerText = 'Supprimer ce tag';
+                removeFormButton.classList.add("bg-red-500", "mt-2", "hover:bg-red-700", "text-white", "font-bold", "py-2", "px-4", "rounded", "focus:outline-none", "focus:shadow-outline");
+
+                item.append(removeFormButton);
+
+                removeFormButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // remove the li for the tag form
+                    item.remove();
+                });
+            }
+
+            const addFormToCollection = (e) => {
+                const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+                const item = document.createElement('li');
+
+                item.innerHTML = collectionHolder
+                    .dataset
+                    .prototype
+                    .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                    );
+
+                collectionHolder.appendChild(item);
+
+                collectionHolder.dataset.index++;
+
+                addTagFormDeleteLink(item);
+            };
+
+            document
+                .querySelectorAll('.add_item_link')
+                .forEach(btn => {
+                    btn.addEventListener("click", addFormToCollection)
+                });
+
+            document
+                .querySelectorAll('ul.tags li')
+                .forEach((tag) => {
+                    addTagFormDeleteLink(tag)
+                })
+
+        })
+    </script>
+{% endblock %}

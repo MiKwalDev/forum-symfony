@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Forum | Topic
+{% endblock %}
+
+{% block body %}
+
+    {% for message in app.flashes('error') %}
+        <div class="rounded-md bg-red-50 p-4">
+            <div class="flex justify-center">
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-red-800">{{ message }}</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+	<div class="w-1/2 m-auto">
+		<div class="px-4 sm:px-0 flex">
+            <div class="w-full">
+                <h3 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{subject.title}}</h3>
+                <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Par {{subject.user.username}}</p>
+                <ul class="flex gap-x-2 me-20">
+                    {% for tag in subject.tags %}
+                        <li>
+                            <span class="inline-flex items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">#{{ tag.name }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% set upVotesCount = 0 %}
+            {% set downVotesCount = 0 %}
+            {% for vote in subject.votes %}
+                {% if vote.isUp == true %}
+                    {% set upVotesCount = upVotesCount + 1 %}
+                {% elseif vote.isUp == false %}
+                    {% set downVotesCount = downVotesCount + 1 %}
+                {% endif %}
+            {% endfor %}
+            <div class="w-full flex flex-col justify-end items-end">
+                {{ form_start(voteForm) }}
+                    {{ form_row(voteForm.upVote) }}
+                    {{ form_row(voteForm.downVote) }}
+                {{ form_end(voteForm) }}
+            </div>
+            <div class="self-center ps-1">
+                <p class="h-6 text-sm leading-6 text-gray-500">{{ upVotesCount }}</p>
+                <p class="h-0 mt-4 text-sm leading-6 text-gray-500">{{ downVotesCount }}</p>
+            </div>
+		</div>
+		<div class="mt-6 border-t border-gray-100">
+			{% for comment in subject.comments %}
+					<div class="bg-white border-solid border-2 border-blue-200 rounded-lg p-1 mt-2">
+                        <div class="-my-10">
+                            <div class="flex space-x-4 text-sm text-gray-500">
+                                <div class="flex-none py-10">
+                                    <img src="/public/img/fuk.jpg" alt="" class="h-10 w-10 rounded-full bg-gray-100">
+                                </div>
+                                <div class="flex-1 py-10">
+                                    <h3 class="font-medium text-gray-900">{{comment.user.username}}</h3>
+                                    <p>
+                                        {% if comment.createdAt != comment.editedAt %}
+                                            <time datetime="{{comment.editedAt|date("d/m/Y")}}">Edité le {{comment.editedAt|date("d/m/Y")}}</time>
+                                        {% else %}
+                                            <time datetime="{{comment.createdAt|date("d/m/Y")}}">Publié le {{comment.createdAt|date("d/m/Y")}}</time>
+                                        {% endif %}
+                                    </p>
+
+                                    <div class="text-base mt-4 max-w-none text-gray-700">
+                                            <p>{{comment.content}}</p>
+                                        <div class="flex justify-end p-2">
+                                            {{ app.user and comment.user.id == app.user.id ? ('<a href="/comment/edit/'~comment.id~'" class="bg-blue-300 mt-2 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Modifier ce commentaire</a>')|raw }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+
+					
+			{% endfor %}
+		</div>
+
+        {% if app.user %}
+            {{ form_start(form) }}
+                {{ form_row(form.content) }}
+
+                <button type="submit" class="bg-indigo-500 mt-2 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Commenter</button>
+            {{ form_end(form) }}
+        {% else %}
+            <div class="mt-2 shadow h-60 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline flex justify-center items-center">
+                <p class="font-semibold text-xl">Veuillez vous connecter pour participer à cette conversation</p>
+            </div>
+        {% endif %}
+	</div>
+
+{% endblock %}
