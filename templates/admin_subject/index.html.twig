@@ -59,7 +59,10 @@
 								<div class="flex-none rounded-full bg-{{subject.isOpen ? 'emerald' : 'red'}}-500/20 p-1">
 									<div class="h-1.5 w-1.5 rounded-full bg-{{subject.isOpen ? 'emerald' : 'red'}}-500"></div>
 								</div>
-								<p class="text-xs leading-5 text-gray-500">{{subject.isOpen ? 'Ouvert' : 'Fermé'}}</p>
+                                <form action="/admin/subject/toggle_is_open/{{ subject.id }}" method="POST">
+                                    <button class="text-xs leading-5 text-gray-500" type="submit">{{ subject.isOpen ? "Ouvert" : "Fermé" }}</button>
+                                </form>
+								{# <p class="text-xs leading-5 text-gray-500">{{subject.isOpen ? 'Ouvert' : 'Fermé'}}</p> #}
 							</div>
 						</td>
 						<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">

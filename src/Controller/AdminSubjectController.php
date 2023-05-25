@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Subject;
 use App\Repository\SubjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,5 +28,16 @@ class AdminSubjectController extends AbstractController
         return $this->render('admin_subject/index.html.twig', [
             "subjects" => $subjects,
         ]);
+    }
+
+    #[Route('/admin/subject/toggle_is_open/{subject}', name: 'app_admin_subject_toggle_is_open', methods: ['POST'])]
+    public function toggleIsOpen(Subject $subject)
+    {
+        $subject->setIsOpen(!$subject->isIsOpen());
+
+        $this->entityManager->persist($subject);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('app_admin_subject');
     }
 }
